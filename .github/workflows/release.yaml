@@ -55,7 +55,7 @@ jobs:
         if [[ "${{ github.ref }}" =~ "^refs/tags/v" ]]; then
           TAG=$(basename ${{ github.ref }})
           sed -i "s/0.0.0/${TAG:1}/g" $(find buildpacks/ -name 'buildpack.toml')
-	fi
+        fi
         pack package-buildpack ${BUILDPACKAGE} --config ./package.toml
         docker push ${BUILDPACKAGE}
 
