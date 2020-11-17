@@ -1,4 +1,7 @@
 on:
+  # Allow manually triggering this.
+  workflow_dispatch: {}
+
   push:
     # For development
     branches: [ "master" ]
