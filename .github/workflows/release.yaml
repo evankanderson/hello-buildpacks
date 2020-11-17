@@ -30,6 +30,8 @@ jobs:
       run: |
         TAG=$(basename ${{ github.ref }})
         echo BUILDPACKAGE=ghcr.io/${{ github.repository}}:${TAG} >> $GITHUB_ENV
+        
+        echo ${{ startsWith(github.ref, "refs/tags/") }}
 
     - name: Install Dependencies
       shell: bash
@@ -54,13 +56,13 @@ jobs:
         docker push ${BUILDPACKAGE}
 
     # Only create releases for tags.
-    - name: Create Release
-      if: ${{ startsWith(github.ref, "refs/tags") }}
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-        draft: false
-        prerelease: true
+#    - name: Create Release
+#      if: ${{ startsWith(github.ref, "refs/tags/") }}
+#      uses: actions/create-release@v1
+#      env:
+#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      with:
+#        tag_name: ${{ github.ref }}
+#        release_name: Release ${{ github.ref }}
+#        draft: false
+#        prerelease: true
