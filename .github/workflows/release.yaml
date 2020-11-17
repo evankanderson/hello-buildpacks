@@ -31,8 +31,10 @@ jobs:
         TAG=$(basename ${{ github.ref }})
         echo BUILDPACKAGE=ghcr.io/${{ github.repository}}:${TAG} >> $GITHUB_ENV
 
+        # PERSONAL_ACCESS_TOKEN was created via the following workflow:
+        # https://docs.github.com/en/free-pro-team@latest/packages/getting-started-with-github-container-registry/migrating-to-github-container-registry-for-docker-images#authenticating-with-the-container-registry
         USER=$(dirname ${{ github.repository }})
-        docker login ghcr.io -u ${USER} -p ${{ secrets.GITHUB_TOKEN }}
+        docker login ghcr.io -u ${USER} -p ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
     - name: Install Dependencies
       shell: bash
