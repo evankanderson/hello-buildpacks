@@ -6,8 +6,8 @@ on:
     # For development
     branches: [ "main" ]
 
-    # tags:
-    #   - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+    tags:
+    - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
 
 name: Create Release
 
@@ -51,9 +51,6 @@ jobs:
 
     - name: Build buildpackage
       run: |
-        # prepare for debugging!
-        set -x
-
         # TODO(mattmoor): sed on the buildpack.toml
         pack package-buildpack ${BUILDPACKAGE} --config ./package.toml
         docker push ${BUILDPACKAGE}
