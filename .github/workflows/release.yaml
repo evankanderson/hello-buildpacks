@@ -51,7 +51,11 @@ jobs:
 
     - name: Build buildpackage
       run: |
-        # TODO(mattmoor): sed on the buildpack.toml
+        # When running in a release tag, replace the 0.0.0 dev version with the version in the tag.
+        if [[ "${{ github.ref }}" =~ "^refs/tags/v" ]]; then
+          TAG=$(basename ${{ github.ref }})
+          sed -i "s/0.0.0/${TAG:1}/g" $(find buildpacks/ -name 'buildpack.toml')
+	fi
         pack package-buildpack ${BUILDPACKAGE} --config ./package.toml
         docker push ${BUILDPACKAGE}
 
