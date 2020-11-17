@@ -14,7 +14,7 @@ name: Create Release
 jobs:
 
   ko-resolve:
-    name: Release ko artifact
+    name: Release buildpackage
     runs-on: ubuntu-latest
     env:
       GO111MODULE: on
@@ -52,7 +52,7 @@ jobs:
     - name: Build buildpackage
       run: |
         # When running in a release tag, replace the 0.0.0 dev version with the version in the tag.
-        if [[ "${{ github.ref }}" =~ "^refs/tags/v" ]]; then
+        if [[ "${{ github.ref }}" =~ "refs/tags/v" ]]; then
           TAG=$(basename ${{ github.ref }})
           sed -i "s/0.0.0/${TAG:1}/g" $(find buildpacks/ -name 'buildpack.toml')
         fi
