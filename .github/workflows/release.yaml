@@ -1,0 +1,57 @@
+on:
+  push:
+    # For development
+    branches: [ "master" ]
+
+    # tags:
+    #   - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+
+name: Create Release
+
+jobs:
+
+  ko-resolve:
+    name: Release ko artifact
+    runs-on: ubuntu-latest
+    env:
+      GO111MODULE: on
+      BUILDPACKAGE: ghcr.io/${{ github.repository}}:${{ github.ref }}
+
+    steps:
+    - name: Set up Go 1.15.x
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.15.x
+
+    - name: Install Dependencies
+      shell: bash
+      run: |
+        echo '::group:: install pack'
+        # From https://buildpacks.io/docs/tools/pack/
+        curl -sSL "https://github.com/buildpacks/pack/releases/download/v0.15.0/pack-v0.15.0-linux.tgz" | sudo tar -C /usr/local/bin/ --no-same-owner -xzv pack
+        echo '::endgroup::'
+
+    - name: Check out code
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 1
+
+    - name: Build buildpackage
+      run: |
+        # prepare for debugging!
+        set -x
+
+        # TODO(mattmoor): sed on the buildpack.toml
+        pack package-buildpack ${BUILDPACKAGE} --config ./package.toml
+        docker push ${BUILDPACKAGE}
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: true
